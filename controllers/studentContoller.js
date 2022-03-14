@@ -6,6 +6,7 @@ exports.createStudent = async (req, res) => {
   console.log('here');
 
   const id = await Students.estimatedDocumentCount();
+  console.log(id);
   try {
     const newStudent = await Students.create({
       ...req.body,
