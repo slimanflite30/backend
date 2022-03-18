@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
+process.on('uncaughtException', err => {
+  console.log(err.name, err.message);
+
+  process.exit(1);
+});
 const app = require('./app');
 
 dotenv.config({ path: './config.env' });
@@ -10,7 +16,10 @@ mongoose
   .connect(
     'mongodb+srv://sliman:sliman123@cluster0.a1qwt.mongodb.net/eductions?retryWrites=true&w=majority',
     {
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false
     }
   )
   .then(() => {
@@ -20,6 +29,12 @@ mongoose
     console.log(err);
   });
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
+});
+process.on('unhandledRejection', err => {
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });

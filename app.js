@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
-
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 const studentRouter = require('./routes/studentRoutes');
 // const userRouter = require('./routes/userRoutes');
 
@@ -36,4 +37,8 @@ app.use((req, res, next) => {
 // 3) ROUTES
 app.use('/api/v1/students', studentRouter);
 
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl}`), 400);
+});
+app.use(globalErrorHandler);
 module.exports = app;

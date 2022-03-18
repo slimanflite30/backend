@@ -1,109 +1,73 @@
 const Students = require('../models/studentModel');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
-exports.createStudent = async (req, res) => {
-  //   const newStudent = new Students(req.body);
-  //   newStudent.save();
-  console.log('here');
+exports.createStudent = catchAsync(async (req, res, next) => {
+  const id = (await Students.estimatedDocumentCount()) || 0;
 
-  const id = await Students.estimatedDocumentCount();
-  console.log(id);
-  try {
-    const newStudent = await Students.create({
-      ...req.body,
-      id: id
-    });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        newStudent
-      }
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    });
+  const newStudent = await Students.create({
+    ...req.body,
+    phone: `${req.body.phone}`,
+    id: id
+  });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      ...newStudent._doc,
+      phone: req.body.phone
+    }
+  });
+});
+exports.getStudent = catchAsync(async (req, res, next) => {
+  const student = await Students.findOne({ id: req.params.id });
+  if (!student) {
+    return next(new AppError('No Student found with ID', 404));
   }
-};
-exports.getStudent = async (req, res) => {
-  try {
-    const student = await Students.findOne({ id: req.params.id });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        student
-      }
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      student
+    }
+  });
+});
+exports.getAllStudent = catchAsync(async (req, res, next) => {
+  const students = await Students.find();
+  res.status(200).json({
+    status: 'success',
+    results: students.length,
+    data: {
+      students
+    }
+  });
+});
+exports.updateStudent = catchAsync(async (req, res, next) => {
+  const newStudent = await Students.findOneAndUpdate(
+    { id: req.params.id },
+    req.body,
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+  if (!newStudent) {
+    return next(new AppError('No Student found with ID', 404));
   }
-  //   console.log(req.params);
-  //   const id = req.params.id * 1;
-  //   const tour = tours.find(el => el.id === id);
-  //   res.status(200).json({
-  //     status: 'success',
-  //     data: {
-  //       tour
-  //     }
-  //   });
-};
-exports.getAllStudent = async (req, res) => {
-  try {
-    const students = await Students.find();
-    res.status(200).json({
-      status: 'success',
-      data: {
-        students
-      }
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    });
+  res.status(200).json({
+    status: 'update success',
+    data: {
+      newStudent
+    }
+  });
+});
+exports.deleteStudent = catchAsync(async (req, res, next) => {
+  const student = await Students.deleteOne({ id: req.params.id });
+  if (!student) {
+    return next(new AppError('No Student found with ID', 404));
   }
-};
-
-exports.updateStudent = async (req, res) => {
-  try {
-    const newStudent = await Students.findOneAndUpdate(
-      { id: req.params.id },
-      req.body,
-      {
-        new: true,
-        runValidators: true
-      }
-    );
-    res.status(200).json({
-      status: 'update success',
-      data: {
-        newStudent
-      }
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err
-    });
-  }
-};
-
-exports.deleteStudent = async (req, res) => {
-  try {
-    const newStudent = await Students.deleteOne({ id: req.params.id });
-    res.status(204).json({
-      status: 'update success',
-      data: {
-        newStudent
-      }
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err
-    });
-  }
-};
+  res.status(204).json({
+    status: 'update success',
+    data: {
+      student
+    }
+  });
+});

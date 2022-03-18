@@ -1,46 +1,48 @@
+/* eslint-disable no-plusplus */
 const mongoose = require('mongoose');
 
-const studentSchema = new mongoose.Schema(
-  {
-    id: {
-      type: Number,
-      unique: true
-    },
-    fname: {
-      type: String,
-      required: [true, 'the fname must be require']
-    },
-    lname: {
-      type: String,
-      required: [true, 'the fname must be require']
-    },
-    nationality: {
-      type: String,
-      required: [true, 'the fname must be require']
-    },
-    email: {
-      type: String,
-      required: [true, 'the fname must be require']
-    },
-    address: {
-      type: String,
-      required: [true, 'the fname must be require']
-    },
-    phone: {
-      type: Number,
-      required: [true, 'the fname must be require']
-    },
-    specialization: {
-      type: String,
-      required: [true, 'the fname must be require']
-    },
-    birthdate: {
-      type: Date,
-      // required: [true, 'the fname must be require']
-      default: new Date(Date.now())
-    }
+let counter = 1;
+
+const CountedId = { type: Number, default: () => counter++ };
+
+const studentSchema = new mongoose.Schema({
+  id: CountedId,
+  fname: {
+    type: String,
+    required: [true, 'the fname must be require']
   },
-  { _id: false, __v: false }
-);
+  lname: {
+    type: String,
+    required: [true, 'the lname must be require']
+  },
+  nationality: {
+    type: String,
+    required: [true, 'the nationality must be require']
+  },
+  email: {
+    type: String,
+    required: [true, 'the email must be require'],
+    unique: true
+  },
+  address: {
+    type: String,
+    required: [true, 'the address must be require']
+  },
+  phone: {
+    type: String,
+    required: [true, 'the phone must be require'],
+    unique: true
+  },
+  specialization: {
+    type: String,
+    required: [true, 'the specialization must be require']
+  },
+  birthdate: {
+    type: Date,
+    // required: [true, 'the fname must be require']
+    default: new Date(Date.now())
+  }
+});
+
 const Student = mongoose.model('Student', studentSchema);
 module.exports = Student;
