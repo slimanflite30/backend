@@ -4,6 +4,8 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const studentRouter = require('./routes/studentRoutes');
 const userRouter = require('./routes/userRoutes');
+const teacherRoutes = require('./routes/teacherRoutes');
+const courseRoutes = require('./routes/courseRoutes');
 
 const app = express();
 console.log(process.env.JWT_SECRET);
@@ -36,6 +38,9 @@ app.use((req, res, next) => {
 });
 // 3) ROUTES
 app.use('/api/v1/students', studentRouter);
+app.use('/api/v1/teachers', teacherRoutes);
+app.use('/api/v1/courses', courseRoutes);
+
 app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {

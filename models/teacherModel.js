@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 const mongoose = require('mongoose');
 
-const studentSchema = new mongoose.Schema({
+const teacherSchema = new mongoose.Schema({
   id: {
     type: Number,
     default: 0
@@ -32,16 +32,19 @@ const studentSchema = new mongoose.Schema({
     required: [true, 'the phone must be require'],
     unique: true
   },
-  specialization: {
-    type: String,
-    required: [true, 'the specialization must be require']
-  },
   birthdate: {
     type: Date,
     // required: [true, 'the fname must be require']
     default: new Date(Date.now())
+  },
+  type: {
+    type: String,
+    required: [true, 'type must be require']
+  },
+  couersCode: {
+    type: Number
   }
 });
 
-const Students = mongoose.model('Student', studentSchema);
-module.exports = Students;
+const Teacher = mongoose.model('Teacher', teacherSchema);
+module.exports = Teacher;
