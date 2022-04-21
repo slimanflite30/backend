@@ -12,15 +12,12 @@ require('dotenv').config();
 
 console.log(process.env.DATABASE);
 mongoose
-  .connect(
-    'mongodb+srv://sliman:sliman12@cluster0.t0se1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-    {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true
-    }
-  )
+  .connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true
+  })
   .then(() => {
     console.log('DB connection successful!');
   })
